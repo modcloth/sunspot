@@ -224,7 +224,7 @@ module Sunspot
       end
 
       def id
-        @__calling_context__.__send__(:id)
+        @__calling_context__.__send__(:object_id)
       end
 
       # Special case due to `Kernel#sub`'s existence
