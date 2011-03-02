@@ -73,6 +73,17 @@ module Sunspot
       FileUtils.cd(File.dirname(solr_jar)) do
         exec(Escape.shell_command(command))
       end
+      command = ['java']
+      command << "-Xms#{min_memory}" if min_memory
+      command << "-Xmx#{max_memory}" if max_memory
+      command << "-Djetty.port=#{master_port}" if master_port
+      command << "-Dsolr.data.dir=#{master_solr_data_dir}" if master_solr_data_dir
+      command << "-Dsolr.solr.home=#{master_solr_home}" if master_solr_home
+      command << "-Djava.util.logging.config.file=#{logging_config_path}" if logging_config_path
+      command << '-jar' << File.basename(solr_jar)
+      FileUtils.cd(File.dirname(solr_jar)) do
+        exec(Escape.shell_command(command))
+      end
     end
 
     # 

@@ -62,12 +62,21 @@ module Sunspot
         File.join(solr_home, 'data', ::Rails.env)
       end
 
-      # 
+      def master_solr_data_dir
+        File.join(master_solr_home, 'data', ::Rails.env)
+      end
+
+      #
       # Directory to use for Solr home.
       #
       def solr_home
         File.join(configuration.solr_home)
       end
+
+      def master_solr_home
+        File.join(configuration.master_solr_home)
+      end
+
 
       #
       # Solr start jar
@@ -81,6 +90,10 @@ module Sunspot
       #
       def port
         configuration.port
+      end
+
+      def master_port
+        configuration.master_port
       end
 
       #
