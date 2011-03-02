@@ -1,7 +1,7 @@
 test:
   solr:
     hostname: localhost
-    port: 8980
+    port: <%= ENV['TEST_PORT'] || 8980 %>
 development:
   solr:
     hostname: localhost
