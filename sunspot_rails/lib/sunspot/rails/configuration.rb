@@ -276,15 +276,13 @@ module Sunspot #:nodoc:
           begin
             path = File.join(::Rails.root, 'config', 'sunspot.yml')
             if File.exist?(path)
-              File.open(path) do |file|
-                YAML.load(file)[::Rails.env]
-              end
+                YAML.load(ERB.new(IO.read(path)).result)[::Rails.env]
             else
               {}
             end
           end
       end
-    
+
     protected
     
       #
