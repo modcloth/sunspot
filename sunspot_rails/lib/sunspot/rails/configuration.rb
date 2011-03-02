@@ -325,7 +325,7 @@ module Sunspot #:nodoc:
             end
           end
       end
-    
+
     protected
     
       #
