@@ -20,5 +20,13 @@ config_test:
     open_timeout: 0.5
   auto_commit_after_request: false
   auto_commit_after_delete_request: true
+  master:
+    hostname: some.master_host
+    port: 4321
+    path: /master_solr/idx
+    log_level: INFO
+    data_path: /my_master_path/data
+    pid_dir: /my_master_path/pids
+    solr_home: /my_master_path
 config_disabled_test:
   disabled: true

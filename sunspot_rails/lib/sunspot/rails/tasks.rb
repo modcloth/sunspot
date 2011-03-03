@@ -59,6 +59,29 @@ namespace :sunspot do
     end
   end
 
+  namespace :master_solr do
+    desc 'Start the Solr instance'
+    task :start => :environment do
+      if RUBY_PLATFORM =~ /w(in)?32$/
+        abort('This command does not work on Windows. Please use rake sunspot:solr:run to run Solr in the foreground.')
+      end
+      Sunspot::Rails::Server.new.master_start
+    end
+
+    desc 'Run the Solr instance in the foreground'
+    task :run => :environment do
+      Sunspot::Rails::Server.new.master_run
+    end
+
+    desc 'Stop the Solr instance'
+    task :stop => :environment do
+      if RUBY_PLATFORM =~ /w(in)?32$/
+        abort('This command does not work on Windows.')
+      end
+      Sunspot::Rails::Server.new.master_stop
+    end
+  end
+
   # Swaps sunspot sessions for the duration of the block
   # Ensures the session is returned to normal in case this task is called from within the rails app
   # and not just a one-off from the command line

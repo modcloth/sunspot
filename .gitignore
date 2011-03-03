@@ -10,3 +10,8 @@ sunspot_solr/solr/solr-webapp
 .yardoc
 docs
 *.swp
+sunspot/.idea/*
+sunspot_rails/.idea/*
+sunspot_rails/spec/rails2/master_solr
+sunspot_rails/spec/rails2/tmp
+

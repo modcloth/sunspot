@@ -112,7 +112,12 @@ module Sunspot #:nodoc:
       # String:: host name
       #
       def master_hostname
-        @master_hostname ||= (user_configuration_from_key('master_solr', 'hostname') || hostname)
+        unless defined?(@master_hostname)
+          @master_hostname   = solr_url.host if solr_url
+          @master_hostname ||= user_configuration_from_key('master', 'hostname')
+          @master_hostname ||= default_hostname
+        end
+        @master_hostname
       end
 
       #
@@ -124,7 +129,13 @@ module Sunspot #:nodoc:
       # Integer:: port
       #
       def master_port
-        @master_port ||= (user_configuration_from_key('master_solr', 'port') || port).to_i
+         unless defined?(@master_port)
+          @master_port   = solr_url.master_port if solr_url
+          @master_port ||= user_configuration_from_key('master', 'port')
+          @master_port ||= master_default_port
+          @master_port   = @master_port.to_i
+        end
+        @master_port
       end
 
       #
@@ -136,7 +147,12 @@ module Sunspot #:nodoc:
       # String:: path
       #
       def master_path
-        @master_path ||= (user_configuration_from_key('master_solr', 'path') || path)
+        unless defined?(@master_path)
+          @master_path   = solr_url.path if solr_url
+          @master_path ||= user_configuration_from_key('master', 'path')
+          @master_path ||= default_path
+        end
+        @master_path
       end
 
       #
@@ -165,6 +181,10 @@ module Sunspot #:nodoc:
           user_configuration_from_key('solr', 'log_level') ||
           LOG_LEVELS[::Rails.logger.level]
         )
+      end
+
+      def master_log_level
+        @master_log_level ||= (user_configuration_from_key('master', 'log_level') || 'INFO')
       end
       
       #
@@ -208,11 +228,18 @@ module Sunspot #:nodoc:
       def data_path
         @data_path ||= user_configuration_from_key('solr', 'data_path') || File.join(::Rails.root, 'solr', 'data', ::Rails.env)
       end
+
+      def master_data_path
+        @master_data_path ||= user_configuration_from_key('master', 'data_path') || File.join(::Rails.root, 'master_solr', 'data', ::Rails.env)
+      end
       
       def pid_dir
         @pid_dir ||= user_configuration_from_key('solr', 'pid_dir') || File.join(::Rails.root, 'solr', 'pids', ::Rails.env)
       end
 
+      def master_pid_path
+        @master_pids_path ||= user_configuration_from_key('master', 'pid_path') || File.join(::Rails.root, 'master_solr', 'pids', ::Rails.env)
+      end
       
       # 
       # The solr home directory. Sunspot::Rails expects this directory
@@ -229,6 +256,15 @@ module Sunspot #:nodoc:
             user_configuration_from_key('solr', 'solr_home')
           else
             File.join(::Rails.root, 'solr')
+          end
+      end
+
+      def master_solr_home
+        @master_solr_home ||=
+          if user_configuration_from_key('master', 'solr_home')
+            user_configuration_from_key('master', 'solr_home')
+          else
+            File.join(::Rails.root, 'master_solr')
           end
       end
 
@@ -350,6 +386,14 @@ module Sunspot #:nodoc:
           'production'  => 8983
         }[::Rails.env]  || 8983
       end
+
+      def master_default_port
+        { 'test'        => 9981,
+          'development' => 9982,
+          'production'  => 9983
+        }[::Rails.env]  || 9983
+      end
+
       
       def default_path
         '/solr/default'
