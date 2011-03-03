@@ -32,7 +32,7 @@ module Sunspot #:nodoc:
     #       solr_home: /some/path
     #       open_timeout: 0.5
     #       read_timeout: 2
-    #     master_solr:
+    #     master:
     #       hostname: localhost
     #       port: 8982
     #       path: /solr
@@ -42,7 +42,7 @@ module Sunspot #:nodoc:
     # well as for starting Solr with the appropriate port using the
     # <code>rake sunspot:solr:start</code> task.
     #
-    # If the <code>master_solr</code> configuration is present, Sunspot will use
+    # If the <code>master</code> configuration is present, Sunspot will use
     # the Solr instance specified here for all write operations, and the Solr
     # configured under <code>solr</code> for all read operations.
     #
@@ -163,7 +163,7 @@ module Sunspot #:nodoc:
       # Boolean:: bool
       #
       def has_master?
-        @has_master = !!user_configuration_from_key('master_solr')
+        @has_master = !!user_configuration_from_key('master')
       end
 
       #
