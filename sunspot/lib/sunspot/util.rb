@@ -224,7 +224,7 @@ module Sunspot
       end
 
       def id
-        @__calling_context__.__send__(:object_id)
+        @__calling_context__.__send__(:id)
       end
 
       def method_missing(method, *args, &block)

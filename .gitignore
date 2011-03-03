@@ -1,2 +1,7 @@
 *.gem
 Gemfile.lock
+sunspot/.idea/*
+sunspot_rails/.idea/*
+sunspot_rails/spec/rails2/master_solr
+sunspot_rails/spec/rails2/tmp
+

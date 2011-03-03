@@ -16,7 +16,7 @@ module Sunspot
 
     LOG_LEVELS = Set['SEVERE', 'WARNING', 'INFO', 'CONFIG', 'FINE', 'FINER', 'FINEST']
 
-    attr_accessor :min_memory, :max_memory, :port, :solr_data_dir, :solr_home, :log_file
+    attr_accessor :min_memory, :max_memory, :port, :solr_data_dir, :solr_home, :log_file, :master_port, :master_solr_data_dir, :master_solr_home
     attr_writer :pid_dir, :pid_file, :log_level, :solr_data_dir, :solr_home, :solr_jar
 
     #
@@ -42,7 +42,7 @@ module Sunspot
         pid = fork do
           Process.setsid
           STDIN.reopen('/dev/null')
-          STDOUT.reopen('/dev/null', 'a')
+#          STDOUT.reopen('/dev/null', 'a')
           STDERR.reopen(STDOUT)
           run
         end
@@ -51,6 +51,33 @@ module Sunspot
           file << pid
         end
       end
+    end
+
+    def master_start
+      if File.exist?(master_pid_path)
+        existing_pid = IO.read(master_pid_path).to_i
+        begin
+          Process.kill(0, existing_pid)
+          raise(AlreadyRunningError, "Server is already running with PID #{existing_pid}")
+        rescue Errno::ESRCH
+          STDERR.puts("Removing stale PID file at #{master_pid_path}")
+          FileUtils.rm(master_pid_path)
+        end
+      end
+      fork do
+        pid = fork do
+          Process.setsid
+          STDIN.reopen('/dev/null')
+#          STDOUT.reopen('/dev/null', 'a')
+          STDERR.reopen(STDOUT)
+          master_run
+        end
+        FileUtils.mkdir_p(pid_dir)
+        File.open(master_pid_path, 'w') do |file|
+          file << pid
+        end
+      end
+
     end
 
     # 
@@ -73,6 +100,9 @@ module Sunspot
       FileUtils.cd(File.dirname(solr_jar)) do
         exec(Escape.shell_command(command))
       end
+    end
+
+    def master_run
       command = ['java']
       command << "-Xms#{min_memory}" if min_memory
       command << "-Xmx#{max_memory}" if max_memory
@@ -86,7 +116,7 @@ module Sunspot
       end
     end
 
-    # 
+    #
     # Stop the sunspot-solr server.
     #
     # ==== Returns
@@ -108,6 +138,21 @@ module Sunspot
       end
     end
 
+    def master_stop
+      if File.exist?(master_pid_path)
+        pid = IO.read(master_pid_path).to_i
+        begin
+          Process.kill('TERM', pid)
+        rescue Errno::ESRCH
+          raise NotRunningError, "Process with PID #{pid} is no longer running"
+        ensure
+          FileUtils.rm(master_pid_path)
+        end
+      else
+        raise NotRunningError, "No PID file at #{master_pid_path}"
+      end
+    end
+
     def log_level=(level)
       unless LOG_LEVELS.include?(level.to_s.upcase)
         raise(ArgumentError, "#{level} is not a valid log level: Use one of #{LOG_LEVELS.to_a.join(',')}")
@@ -123,8 +168,8 @@ module Sunspot
       File.join(pid_dir, pid_file)
     end
 
-    def pid_file
-      @pid_file || 'sunspot-solr.pid'
+    def master_pid_path
+      File.join(pid_dir, master_pid_file)
     end
 
     def pid_dir

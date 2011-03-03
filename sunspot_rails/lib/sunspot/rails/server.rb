@@ -10,8 +10,18 @@ module Sunspot
         super
       end
 
+      def master_start
+        master_bootstrap
+        super
+      end
+
       def run
         bootstrap
+        super
+      end
+
+      def master_run
+        master_bootstrap
         super
       end
 
@@ -30,7 +40,14 @@ module Sunspot
         end
       end
 
-      # 
+      def master_bootstrap
+        unless @master_bootstrapped
+          install_master_solr_home
+          @master_bootstrapped = true
+        end
+      end
+
+      #
       # Directory to store custom libraries for solr
       #
       def lib_path
@@ -51,7 +68,11 @@ module Sunspot
         "sunspot-solr-#{::Rails.env}.pid"
       end
 
-      # 
+      def master_pid_file
+        "sunspot-master-solr-#{::Rails.env}.pid"
+      end
+
+      #
       # Directory to store lucene index data files
       #
       # ==== Returns
@@ -109,6 +130,10 @@ module Sunspot
       #
       def log_file
         File.join(::Rails.root, 'log', "sunspot-solr-#{::Rails.env}.log")
+      end
+
+      def master_log_file
+        File.join(::Rails.root, 'log', "sunspot-master-solr-#{::Rails.env}.log")
       end
 
       # 
@@ -169,7 +194,17 @@ module Sunspot
         end
       end
 
-      # 
+      def install_master_solr_home
+        unless File.exists?(master_solr_home)
+          Sunspot::Installer.execute(
+            master_solr_home,
+            :force => true,
+            :verbose => true
+          )
+        end
+      end
+
+      #
       # Create new solr_home, config, log and pid directories
       #
       # ==== Returns
@@ -177,7 +212,7 @@ module Sunspot
       # Boolean:: success
       #
       def create_solr_directories
-        [solr_data_dir, pid_dir].each do |path|
+        [master_solr_data_dir, solr_data_dir, pid_dir].each do |path|
           FileUtils.mkdir_p( path )
         end
       end
