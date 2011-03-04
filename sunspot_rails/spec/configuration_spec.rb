@@ -162,6 +162,10 @@ describe Sunspot::Rails::Configuration, "user provided sunspot.yml" do
     it "should handle the 'open_timeout' property when set" do
       @config.open_timeout.should == 0.5
     end
+
+    it 'should return the replication endpoint url of the master' do
+      @config.master_replication_url.should == "http://some.master_host:4321/solr/replication"
+    end
   end
   context "master" do
     it "should handle the 'hostname' property when set" do

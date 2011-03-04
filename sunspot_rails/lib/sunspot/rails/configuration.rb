@@ -240,7 +240,10 @@ module Sunspot #:nodoc:
       def master_pid_path
         @master_pids_path ||= user_configuration_from_key('master', 'pid_path') || File.join(::Rails.root, 'master_solr', 'pids', ::Rails.env)
       end
-      
+
+      def master_replication_url
+        "http://#{master_hostname}:#{master_port}/solr/replication"
+      end
       # 
       # The solr home directory. Sunspot::Rails expects this directory
       # to contain a config, data and pids directory. See 
