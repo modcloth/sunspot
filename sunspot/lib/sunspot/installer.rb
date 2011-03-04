@@ -23,7 +23,7 @@ module Sunspot
       )
       filename = 'solrconfig.xml'
       if @options[:client]
-        filename = 'solrconfig_client.xml'
+        filename = 'solrconfig_slave.xml'
       elsif @options[:master]
         filename = 'solrconfig_master.xml'
       end
