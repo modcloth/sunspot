@@ -2,6 +2,9 @@ test:
   solr:
     hostname: localhost
     port: <%= ENV['TEST_PORT'] || 8983 %>
+  master:
+     hostname: localhost
+     port: 299<%= ENV["DISPLAY"] ? ENV["DISPLAY"].gsub(":", "").to_i : 1 %> 
 development:
   solr:
     hostname: localhost

@@ -33,6 +33,10 @@ describe Sunspot::Rails::Server do
     it "sets the correct log file" do
       @server.log_file.should == File.join(Rails.root, 'log', 'sunspot-solr-test.log')
     end
+
+    it "sets the correct master replication url" do
+      @server.master_replication_url.should == "http://localhost:9981/solr/replication"
+    end
   end
   context "master" do
     it "sets the correct Solr home" do

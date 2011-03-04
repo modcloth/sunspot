@@ -69,6 +69,9 @@ module Sunspot
         "sunspot-master-solr-#{::Rails.env}.pid"
       end
 
+      def master_replication_url
+        configuration.master_replication_url
+      end
       #
       # Directory to store lucene index data files
       #
