@@ -98,6 +98,9 @@ module Sunspot
       command << "-Dreplication.url=#{master_replication_url}" if master_replication_url
       command << "-Djava.util.logging.config.file=#{logging_config_path}" if logging_config_path
       command << '-jar' << File.basename(solr_jar)
+      puts command.inspect
+      puts "@"*20
+      puts master_replication_url.inspect
       FileUtils.cd(File.dirname(solr_jar)) do
         exec(Escape.shell_command(command))
       end
