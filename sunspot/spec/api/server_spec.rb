@@ -48,6 +48,12 @@ describe Sunspot::Server do
       @server.run
     end
 
+    it "runs Solr with the specified master replication url" do
+      @server.master_replication_url = "http://some.url:9999/solr/replication"
+      @server.should_receive(:exec).with(%r(-Dreplication\.url=http://some\.url:9999/solr/replication))
+      @server.run
+    end
+
     it 'runs Solr with specified Solr jar' do
       @server.solr_jar = SUNSPOT_START_JAR
       FileUtils.should_receive(:cd).with(File.dirname(SUNSPOT_START_JAR))

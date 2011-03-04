@@ -16,7 +16,7 @@ module Sunspot
 
     LOG_LEVELS = Set['SEVERE', 'WARNING', 'INFO', 'CONFIG', 'FINE', 'FINER', 'FINEST']
 
-    attr_accessor :min_memory, :max_memory, :port, :solr_data_dir, :solr_home, :log_file, :master_port, :master_solr_data_dir, :master_solr_home
+    attr_accessor :min_memory, :max_memory, :port, :solr_data_dir, :solr_home, :log_file, :master_port, :master_solr_data_dir, :master_solr_home, :master_replication_url
     attr_writer :pid_dir, :pid_file, :log_level, :solr_data_dir, :solr_home, :solr_jar
 
     #
@@ -95,6 +95,7 @@ module Sunspot
       command << "-Djetty.port=#{port}" if port
       command << "-Dsolr.data.dir=#{solr_data_dir}" if solr_data_dir
       command << "-Dsolr.solr.home=#{solr_home}" if solr_home
+      command << "-Dreplication.url=#{master_replication_url}" if master_replication_url
       command << "-Djava.util.logging.config.file=#{logging_config_path}" if logging_config_path
       command << '-jar' << File.basename(solr_jar)
       FileUtils.cd(File.dirname(solr_jar)) do

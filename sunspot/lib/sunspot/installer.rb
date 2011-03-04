@@ -21,10 +21,18 @@ module Sunspot
         File.join(@solr_home, 'conf', 'schema.xml'),
         @options
       )
+      filename = 'solrconfig.xml'
+      if @options[:client]
+        filename = 'solrconfig_client.xml'
+      elsif @options[:master]
+        filename = 'solrconfig_master.xml'
+      end
       SolrconfigUpdater.execute(
-        File.join(@solr_home, 'conf', 'solrconfig.xml'),
+        File.join(@solr_home, 'conf', filename),
         @options
       )
+      File.rename(File.join(@solr_home, 'conf', filename), File.join(@solr_home, 'conf', 'solrconfig.xml'))
+
       LibraryInstaller.execute(File.join(@solr_home, 'lib'), @options)
     end
   end

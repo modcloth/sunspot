@@ -149,6 +149,10 @@ describe Sunspot::Rails::Configuration, "user provided sunspot.yml" do
     it "should handle the 'auto_commit_after_delete_request' propery when set" do
       @config.auto_commit_after_delete_request?.should == true
     end
+
+    it 'should return the replication endpoint url of the master' do
+      @config.master_replication_url.should == "http://some.master_host:4321/solr/replication"
+    end
   end
   context "master" do
     it "should handle the 'hostname' property when set" do

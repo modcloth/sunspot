@@ -189,7 +189,8 @@ module Sunspot
           Sunspot::Installer.execute(
             solr_home,
             :force => true,
-            :verbose => true
+            :verbose => true,
+            :client => configuration.has_master?
           )
         end
       end
@@ -199,7 +200,8 @@ module Sunspot
           Sunspot::Installer.execute(
             master_solr_home,
             :force => true,
-            :verbose => true
+            :verbose => true,
+            :master => true
           )
         end
       end
