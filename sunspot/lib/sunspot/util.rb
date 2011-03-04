@@ -224,7 +224,11 @@ module Sunspot
       end
 
       def id
-        @__calling_context__.__send__(:id)
+        original_verbosity = $VERBOSE
+        $VERBOSE = nil
+        some_id = @__calling_context__.__send__(:id)
+        $VERBOSE = original_verbosity
+        some_id
       end
 
       def method_missing(method, *args, &block)
