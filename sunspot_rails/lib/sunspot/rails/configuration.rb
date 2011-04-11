@@ -275,7 +275,10 @@ module Sunspot #:nodoc:
       def max_memory
         @max_memory ||= user_configuration_from_key('solr', 'max_memory')
       end
-      
+
+      def newrelic
+        @newrelic ||= user_configuration_from_key('solr', 'newrelic_home')
+      end
       private
       
       #

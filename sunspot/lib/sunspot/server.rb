@@ -95,6 +95,8 @@ module Sunspot
       command << "-Djetty.port=#{port}" if port
       command << "-Dsolr.data.dir=#{solr_data_dir}" if solr_data_dir
       command << "-Dsolr.solr.home=#{solr_home}" if solr_home
+      command << "-javaagent:#{Sunspot::Rails.configuration.newrelic}" if Sunspot::Rails.configuration.newrelic
+      command << "-Dnewrelic.environment=#{::Rails.env}" if Sunspot::Rails.configuration.newrelic
       command << "-Dreplication.url=#{master_replication_url}" if master_replication_url
       command << "-Djava.util.logging.config.file=#{logging_config_path}" if logging_config_path
       command << '-jar' << File.basename(solr_jar)
@@ -110,6 +112,8 @@ module Sunspot
       command << "-Djetty.port=#{master_port}" if master_port
       command << "-Dsolr.data.dir=#{master_solr_data_dir}" if master_solr_data_dir
       command << "-Dsolr.solr.home=#{master_solr_home}" if master_solr_home
+      command << "-javaagent:#{Sunspot::Rails.configuration.newrelic}" if Sunspot::Rails.configuration.newrelic
+      command << "-Dnewrelic.environment=#{::Rails.env}" if Sunspot::Rails.configuration.newrelic
       command << "-Djava.util.logging.config.file=#{logging_config_path}" if logging_config_path
       command << '-jar' << File.basename(solr_jar)
       FileUtils.cd(File.dirname(solr_jar)) do
