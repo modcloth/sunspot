@@ -162,10 +162,13 @@ module Sunspot
       #
       class EqualTo < Base
         def to_positive_boolean_phrase
-          unless @value.nil?
-            super
-          else
+          case @value
+          when nil
             "#{escape(@field.indexed_name)}:[* TO *]"
+          when ''
+            %Q(#{escape(@field.indexed_name)}:[* TO ""])
+          else
+            super
           end
         end
 
