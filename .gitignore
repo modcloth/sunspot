@@ -6,3 +6,4 @@ sunspot_rails/.rvmrc
 sunspot_rails/spec/rails2/master_solr
 sunspot_rails/spec/rails2/tmp
 sunspot_rails/spec/rails3/master_solr/
+.idea
