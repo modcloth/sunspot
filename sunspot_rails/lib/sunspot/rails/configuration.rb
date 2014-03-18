@@ -1,3 +1,5 @@
+require 'erb'
+
 module Sunspot #:nodoc:
   module Rails #:nodoc:
     #
@@ -12,6 +14,8 @@ module Sunspot #:nodoc:
     #       min_memory: 512M
     #       max_memory: 1G
     #       solr_jar: /some/path/solr15/start.jar
+    #       bind_address: 0.0.0.0
+    #     disabled: false
     #   test:
     #     solr:
     #       hostname: localhost
@@ -28,6 +32,8 @@ module Sunspot #:nodoc:
     #       hostname: localhost
     #       port: 8982
     #       path: /solr
+    #     auto_index_callback: after_commit
+    #     auto_remove_callback: after_commit
     #     auto_commit_after_request: true
     #
     # Sunspot::Rails uses the configuration to set up the Solr connection, as
@@ -117,7 +123,7 @@ module Sunspot #:nodoc:
       # Integer:: port
       #
       def master_port
-         unless defined?(@master_port)
+        unless defined?(@master_port)
           @master_port   = solr_url.master_port if solr_url
           @master_port ||= user_configuration_from_key('master', 'port')
           @master_port ||= master_default_port
@@ -217,8 +223,8 @@ module Sunspot #:nodoc:
         @master_data_path ||= user_configuration_from_key('master', 'data_path') || File.join(::Rails.root, 'master_solr', 'data', ::Rails.env)
       end
       
-      def pid_path
-        @pids_path ||= user_configuration_from_key('solr', 'pid_path') || File.join(::Rails.root, 'solr', 'pids', ::Rails.env)
+      def pid_dir
+        @pid_dir ||= user_configuration_from_key('solr', 'pid_dir') || File.join(::Rails.root, 'solr', 'pids', ::Rails.env)
       end
 
       def master_pid_path
@@ -228,6 +234,7 @@ module Sunspot #:nodoc:
       def master_replication_url
         "http://#{master_hostname}:#{master_port}/solr/replication"
       end
+
       # 
       # The solr home directory. Sunspot::Rails expects this directory
       # to contain a config, data and pids directory. See 
@@ -279,6 +286,44 @@ module Sunspot #:nodoc:
       def newrelic
         @newrelic ||= user_configuration_from_key('solr', 'newrelic_home')
       end
+
+      #
+      # Interface on which to run Solr
+      #
+      def bind_address
+        @bind_address ||= user_configuration_from_key('solr', 'bind_address')
+      end
+
+      #
+      # Whether or not to disable Solr.
+      # Defaults to false.
+      #
+      def disabled?
+        @disabled ||= (user_configuration_from_key('disabled') || false)
+      end
+
+      #
+      # The callback to use when automatically indexing records. The default is
+      # after_save for backwards compatibility, but after_commit is highly
+      # recommended on Rails 3 as the record will have been fully committed
+      # and won't rolled back by other callbacks.
+      #
+      def auto_index_callback
+        @auto_index_callback ||=
+          (user_configuration_from_key('auto_index_callback') || 'after_save')
+      end
+
+      #
+      # The callback to use when automatically removing records after deletion.
+      # The default is after_destroy for backwards compatibility, but
+      # after_commit is highly recommended on Rails 3 as the record will have
+      # been fully removed and won't rolled back by other callbacks.
+      #
+      def auto_remove_callback
+        @auto_remove_callback ||=
+          (user_configuration_from_key('auto_remove_callback') || 'after_destroy')
+      end
+
       private
       
       #
@@ -319,7 +364,10 @@ module Sunspot #:nodoc:
           begin
             path = File.join(::Rails.root, 'config', 'sunspot.yml')
             if File.exist?(path)
-                YAML.load(ERB.new(IO.read(path)).result)[::Rails.env]
+              File.open(path) do |file|
+                processed = ERB.new(file.read).result
+                YAML.load(processed)[::Rails.env]
+              end
             else
               {}
             end

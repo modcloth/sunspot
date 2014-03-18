@@ -1,9 +1,10 @@
 *.gem
 Gemfile.lock
-sunspot/.idea/*
-sunspot_rails/.idea/*
-sunspot_rails/.rvmrc
-sunspot_rails/spec/rails2/master_solr
-sunspot_rails/spec/rails2/tmp
-sunspot_rails/spec/rails3/master_solr/
-.idea
+vendor/bundle
+sunspot/vendor/bundle
+sunspot_rails/spec/rails2/vendor
+sunspot_rails/spec/rails3/vendor
+**/*/vendor/bundle
+sunspot-solr.pid
+.yardoc
+docs

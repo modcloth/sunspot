@@ -7,10 +7,12 @@ rescue LoadError
   # It's OK if hanna isn't installed.
 end
 
-Rake::RDocTask.new(:doc) do |rdoc|
-  rdoc.main = 'README.rdoc'
-  rdoc.rdoc_files.include('README.rdoc', 'lib/sunspot/rails/**/*.rb', 'lib/sunspot/rails.rb')
-  rdoc.rdoc_dir = 'doc'
+if defined?(Rake::RDocTask)
+  Rake::RDocTask.new(:doc) do |rdoc|
+    rdoc.main = 'README.md'
+    rdoc.rdoc_files.include('README.md', 'lib/sunspot/rails/**/*.rb', 'lib/sunspot/rails.rb')
+    rdoc.rdoc_dir = 'doc'
+  end
 end
 
 namespace :doc do

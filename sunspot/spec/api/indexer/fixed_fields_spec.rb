@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require File.expand_path('spec_helper', File.dirname(__FILE__))
 
 describe 'indexing fixed fields', :type => :indexer do
   it 'should index id' do
@@ -41,7 +41,7 @@ describe 'indexing fixed fields', :type => :indexer do
     session.index!(post)
   end
 
-  it 'raises an ArgumentError if an attempt is made to index an object that has no configuration' do
+  it 'raises an NoSetupError if an attempt is made to index an object that has no configuration' do
     lambda { session.index(Blog.new) }.should raise_error(Sunspot::NoSetupError)
   end
 
