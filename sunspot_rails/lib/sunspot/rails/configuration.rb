@@ -312,6 +312,21 @@ module Sunspot #:nodoc:
         @max_memory ||= user_configuration_from_key('solr', 'max_memory')
       end
 
+      #
+      # Interface on which to run Solr
+      #
+      def bind_address
+        @bind_address ||= user_configuration_from_key('solr', 'bind_address')
+      end
+
+      def read_timeout
+        @read_timeout ||= user_configuration_from_key('solr', 'read_timeout')
+      end
+
+      def open_timeout
+        @open_timeout ||= user_configuration_from_key('solr', 'open_timeout')
+      end
+
       def newrelic
         @newrelic ||= user_configuration_from_key('solr', 'newrelic_home')
       end
