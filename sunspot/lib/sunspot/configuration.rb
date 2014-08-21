@@ -22,6 +22,7 @@ module Sunspot
           solr do
             url 'http://127.0.0.1:8983/solr'
             read_timeout nil
+            open_timeout nil
           end
           master_solr do
             url nil
