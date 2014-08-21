@@ -279,6 +279,15 @@ module Sunspot #:nodoc:
       def newrelic
         @newrelic ||= user_configuration_from_key('solr', 'newrelic_home')
       end
+
+      #
+      # Whether or not to disable Solr.
+      # Defaults to false.
+      #
+      def disabled?
+        @disabled ||= (user_configuration_from_key('disabled') || false)
+      end
+
       private
       
       #
