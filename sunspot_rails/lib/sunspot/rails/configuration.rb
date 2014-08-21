@@ -92,6 +92,25 @@ module Sunspot #:nodoc:
       end
 
       #
+      # The userinfo used for authentication, a colon-delimited string like "user:pass"
+      # Defaults to nil, which means no authentication
+      #
+      # ==== Returns
+      #
+      # String:: userinfo
+      #
+      def userinfo
+        unless defined?(@userinfo)
+          @userinfo   = solr_url.userinfo if solr_url
+          user = user_configuration_from_key('solr', 'user')
+          pass = user_configuration_from_key('solr', 'pass')
+          @userinfo ||= [ user, pass ].compact.join(":") if user && pass
+          @userinfo ||= default_userinfo
+        end
+        @userinfo
+      end
+
+      #
       # The url path to the Solr servlet (useful if you are running multicore).
       # Default '/solr'.
       #
@@ -386,6 +405,10 @@ module Sunspot #:nodoc:
 
       def default_scheme
         'http'
+      end
+
+      def default_userinfo
+        nil
       end
 
       def default_path
