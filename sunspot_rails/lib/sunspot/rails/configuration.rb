@@ -75,6 +75,23 @@ module Sunspot #:nodoc:
       end
 
       #
+      # The scheme to use, http or https.
+      # Defaults to http
+      #
+      # ==== Returns
+      #
+      # String:: scheme
+      #
+      def scheme
+        unless defined?(@scheme)
+          @scheme   = solr_url.scheme if solr_url
+          @scheme ||= user_configuration_from_key('solr', 'scheme')
+          @scheme ||= default_scheme
+        end
+        @scheme
+      end
+
+      #
       # The url path to the Solr servlet (useful if you are running multicore).
       # Default '/solr'.
       #
@@ -367,7 +384,10 @@ module Sunspot #:nodoc:
         }[::Rails.env]  || 9983
       end
 
-      
+      def default_scheme
+        'http'
+      end
+
       def default_path
         '/solr'
       end
